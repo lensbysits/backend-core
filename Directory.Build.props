@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -11,6 +11,8 @@
     <Authors>Lens Dev Team</Authors>
     <RootNamespace>Lens.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>Lens.$(MSBuildProjectName)</AssemblyName>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
   </PropertyGroup>
   
 </Project>
