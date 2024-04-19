@@ -11,6 +11,8 @@
     <Authors>Lens Dev Team</Authors>
     <RootNamespace>Lens.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>Lens.$(MSBuildProjectName)</AssemblyName>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
   </PropertyGroup>
   
 </Project>

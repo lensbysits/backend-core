@@ -28,7 +28,8 @@ public class MasterdataServiceFixture : IDisposable
         {
             var Configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddJsonFile("appsettings.Development.json")
+                .AddJsonFile("appsettings.Development.json", optional: true)
+                .AddEnvironmentVariables()
                 .AddUserSecrets(GetType().Assembly)
                 .Build();
 
