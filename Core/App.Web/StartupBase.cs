@@ -46,7 +46,6 @@ public class StartupBase
     public virtual void ConfigureServices(IServiceCollection services)
     {
         var applicationSetup = new WebApplicationSetupBuilder(services, Configuration);
-        OnSetupApplication(applicationSetup);
 
         services
             .AddDefaultCorrelationId(config =>
@@ -66,6 +65,8 @@ public class StartupBase
         services.Configure<ApiExceptionHandlingConfig>(option => Configuration.Bind(nameof(ApiExceptionHandlingConfig), option));
 
         applicationSetup.AddApplicationServices();
+
+        OnSetupApplication(applicationSetup);
     }
 
     private static void ConfigureControllers(MvcOptions options, WebApplicationSetupBuilder applicationSetup)
