@@ -3,6 +3,9 @@
 public class BlobSettings
 {
     public string? ConnectionString { get; set; }
+
+    public string? LocationName { get; set; }
+
     public string? ContainerPath { get; set; }
 
         public string Provider { get; set; } = BlobProvider_FileSystem;
