@@ -61,7 +61,7 @@ public static class ApplicationSetupBuilderExtensions
                     }
                 }
 
-                builder.AddBlobServiceClient(blobStorageFullUrl);
+                builder.AddBlobServiceClient(new Uri(blobStorageFullUrl));
             }
 
 
