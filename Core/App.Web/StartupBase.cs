@@ -67,6 +67,8 @@ public class StartupBase
         applicationSetup.AddApplicationServices();
 
         OnSetupApplication(applicationSetup);
+
+        applicationSetup.AddAssemblySpecificApplicationServices();
     }
 
     private static void ConfigureControllers(MvcOptions options, WebApplicationSetupBuilder applicationSetup)
