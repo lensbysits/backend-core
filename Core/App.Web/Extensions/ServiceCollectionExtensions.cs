@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 using Lens.Core.App.Web.Authentication;
+using Lens.Core.App.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,8 @@ public static class ServiceCollectionExtensions
                 Title = swaggerSettings?.AppName ?? "Protected API", 
                 Version = "v1" 
             });
+
+            options.DocumentFilter<AdditionalSwaggerModelFilter>();
 
                 foreach(var definition in swaggerSettings?.ExtraDefinitions ?? new())
                 {

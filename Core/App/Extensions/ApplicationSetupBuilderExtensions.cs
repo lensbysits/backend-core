@@ -11,12 +11,24 @@ public static class ApplicationSetupBuilderExtensions
     public static IApplicationSetupBuilder AddApplicationServices(this IApplicationSetupBuilder applicationSetup)
     {
         applicationSetup
-            .AddAutoMapper()
-            .AddMediatR()
             .AddBackgroundTaskQueue()
             .Services
                 .AddScoped(typeof(IApplicationService<>), typeof(ApplicationService<>))
                 .AddScoped(typeof(IApplicationService<,>), typeof(ApplicationService<,>));
+
+        return applicationSetup;
+    }
+
+    /// <summary>
+    /// These services are dependent on the assemblies you add to the services for scanning, so should run AFTER the service collection has been built.
+    /// </summary>
+    /// <param name="applicationSetup"></param>
+    /// <returns></returns>
+    public static IApplicationSetupBuilder AddAssemblySpecificApplicationServices(this IApplicationSetupBuilder applicationSetup)
+    {
+        applicationSetup
+            .AddAutoMapper()
+            .AddMediatR();
 
         return applicationSetup;
     }

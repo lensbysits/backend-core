@@ -49,6 +49,7 @@ public static class DatabaseSetupBuilderExtensions
 
         builder
             .AddModelBuilderService()
+            .AddDbContextInterceptorServices()
             .Services
                 .AddTransient<IModelBuilderService, IdModelBuilderService>()
                 .Configure<MigrationSettings>(options => builder.Configuration.Bind(nameof(MigrationSettings), options));

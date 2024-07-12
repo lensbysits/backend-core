@@ -1,4 +1,5 @@
 ﻿using Lens.Core;
+using Lens.Core.Data.EF.Translation.Models;
 using Lens.Core.Lib.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,6 +12,18 @@ public class MasterdataTypeModel : IdModel, IMetadataModel
     public string? Name { get; set; }
     public string? Description { get; set; }
     public int? MasterdatasCount { get; set; }
+
+    [JsonIgnore]
+    public string? Translation
+    {
+        set
+        {
+            JsonSerializerOptions options = new(JsonSerializerDefaults.Web);
+            Translations = JsonSerializer.Deserialize<IEnumerable<TranslationModel>>(value ?? "[]", options);
+        }
+    }
+
+    public IEnumerable<TranslationModel>? Translations { get; set; }
 
     [JsonIgnore]
     public string? MetadataJson { get; set; }

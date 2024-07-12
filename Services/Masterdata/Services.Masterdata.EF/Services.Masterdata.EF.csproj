@@ -1,8 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <None Remove="RawSql\StoredProcedures\sp_GetMasterdataRecursiveTree.sql" />
+	<None Remove="RawSql\StoredProcedures\sp_GetMasterdataFilterByRelatedMasterdata.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Data.EF.SqlServer\Core.Data.EF.SqlServer\Core.Data.EF.SqlServer.csproj" />
     <ProjectReference Include="..\Services.Masterdata\Services.Masterdata.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="RawSql\StoredProcedures\sp_GetMasterdataRecursiveTree.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+	  <Content Include="RawSql\StoredProcedures\sp_GetMasterdataFilterByRelatedMasterdata.sql">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
 </Project>

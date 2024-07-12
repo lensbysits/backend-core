@@ -20,9 +20,13 @@ public static class IApplicationSetupBuilderExtensions
         {
             throw new NotFoundException($"Missing value for '{nameof(BlobSettings.ContainerPath)}'");
         }
-        if (string.IsNullOrEmpty(blobSettings.ConnectionString) && blobImplementationType == BlobImplementationType.AzureStorage)
+
+        if (blobImplementationType == BlobImplementationType.AzureStorage)
         {
-            throw new NotFoundException($"Missing value for '{nameof(BlobSettings.ConnectionString)}'");
+            if (string.IsNullOrEmpty(blobSettings.ConnectionString) && string.IsNullOrEmpty(blobSettings.LocationName))
+            {
+                throw new NotFoundException($"Missing value for '{nameof(BlobSettings.ConnectionString)}' or '{nameof(BlobSettings.LocationName)}'");
+            }
         }
 
         switch (blobImplementationType)

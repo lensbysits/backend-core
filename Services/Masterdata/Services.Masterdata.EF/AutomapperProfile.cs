@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Lens.Core.Data.EF.Translation.Models;
 using Lens.Core.Lib.Models;
 using Lens.Services.Masterdata.EF.Entities;
 using Lens.Services.Masterdata.Models;
 using LinqKit;
 using System.Text.Json;
+using MasterDataEntity = Lens.Services.Masterdata.EF.Entities.Masterdata;
+using MasterDataKeyEntity = Lens.Services.Masterdata.EF.Entities.MasterdataKey;
 
 namespace Lens.Services.Masterdata.EF;
 
@@ -11,7 +14,7 @@ internal class AutomapperProfile : Profile
 {
     public AutomapperProfile()
     {
-        // Masterdata
+        // Masterdata Type
         CreateMap<MasterdataType, MasterdataTypeListModel>();
         CreateMap<MasterdataType, MasterdataTypeModel>();
         CreateMap<MasterdataTypeCreateModel, MasterdataType>()
@@ -19,9 +22,18 @@ internal class AutomapperProfile : Profile
         CreateMap<MasterdataTypeUpdateModel, MasterdataType>()
             .AfterMap(UpdateMetadata);
 
-        CreateMap<Entities.Masterdata, MasterdataModel>();
-        CreateMap<MasterdataCreateModel, Entities.Masterdata>();
-        CreateMap<MasterdataUpdateModel, Entities.Masterdata>();
+        // Masterdata
+        CreateMap<MasterDataEntity, MasterdataModel>();
+        CreateMap<MasterdataCreateModel, MasterDataEntity>();
+        CreateMap<MasterdataUpdateModel, MasterDataEntity>();
+
+        // MasterdataKey
+        CreateMap<MasterDataKeyEntity, MasterdataKeyModel>();
+        CreateMap<MasterdataKeyCreateModel, MasterDataKeyEntity>();
+
+        // Translation
+        CreateMap<TranslationUpdateModel, MasterdataType>();
+        CreateMap<TranslationUpdateModel, MasterDataEntity>();
     }
 
     private void UpdateMetadata(IMetadataModel source, MasterdataType destination)

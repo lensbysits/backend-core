@@ -5,7 +5,7 @@ namespace Lens.Core.Lib.Models;
 
 public class QueryModel
 {
-    public static QueryModel Default => new QueryModel();
+    public static QueryModel Default => new();
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public int Offset { get; set; } = 0;
@@ -18,8 +18,11 @@ public class QueryModel
     public bool NoLimit { get; set; } = false;
 
     // Filter by fields:
+    [Obsolete("Tag is deprecated and might be remove in a future version of the framework. Please use the Tags instead. Deprecatated started from 2023.feb.06.")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Tag { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? Tags { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? CreatedBy { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -51,6 +54,10 @@ public class QueryModel
             if (!string.IsNullOrWhiteSpace(Tag))
             {
                 queryStringSegments.Add($"{nameof(Tag)}={UrlEncoder.Default.Encode(Tag)}");
+            }
+            if (!string.IsNullOrWhiteSpace(Tags))
+            {
+                queryStringSegments.Add($"{nameof(Tags)}={UrlEncoder.Default.Encode(Tags)}");
             }
 
             if (!string.IsNullOrWhiteSpace(CreatedBy))
