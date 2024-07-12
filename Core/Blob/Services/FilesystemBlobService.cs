@@ -61,7 +61,7 @@ public class FilesystemBlobService : BaseService<FilesystemBlobService>, IBlobSe
             : await Task.FromResult(string.Empty);
     }
 
-    public async Task<BlobMetadataModel> Upload(string relativePathAndName, Stream stream)
+    public async Task<BlobMetadataModel> Upload(string relativePathAndName, Stream stream, Dictionary<string, string>? additionalInformation = null)
     {
         var extension = Path.GetExtension(relativePathAndName);
         var newFileName = $"{Guid.NewGuid()}{extension}";

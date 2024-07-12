@@ -66,11 +66,16 @@ public class AzureStorageBlobService : BaseService<AzureStorageBlobService>, IBl
         return Task.FromResult(blobClient.Uri.AbsoluteUri.ToString());
     }
 
-    public async Task<BlobMetadataModel> Upload(string relativePathAndName, Stream stream)
+    public async Task<BlobMetadataModel> Upload(string relativePathAndName, Stream stream, Dictionary<string, string>? additionalInformation = null)
     {
         BlobClient blobClient = blobcontainerClient.GetBlobClient(relativePathAndName);
+        var headers = new BlobHttpHeaders();
+        if (additionalInformation?.ContainsKey("Content-Type") ?? false)
+        {
+            headers.ContentType = additionalInformation["Content-Type"];
+        }
 
-        var uploadInfo = await blobClient.UploadAsync(stream);
+        var uploadInfo = await blobClient.UploadAsync(stream, headers);
 
         var blobMetadata = new BlobMetadataModel()
         {

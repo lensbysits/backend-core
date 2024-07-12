@@ -36,11 +36,32 @@ public static class ApplicationSetupBuilderExtensions
 
             var blobStorageProvider = applicationSetup.Configuration["BlobSettings:Provider"];
             var blobStorageConnectionString = applicationSetup.Configuration["BlobSettings:ConnectionString"];
+            var blobStorageLocationName = applicationSetup.Configuration["BlobSettings:LocationName"];
 
             if (!string.IsNullOrEmpty(blobStorageProvider) && blobStorageProvider.Equals("azure", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrEmpty(blobStorageConnectionString))
             {
                 // blob storage will be added as singleton: https://docs.microsoft.com/en-us/dotnet/azure/sdk/thread-safety#client-lifetime
                 builder.AddBlobServiceClient(blobStorageConnectionString);
+            }
+
+            // zero trust configuration
+            if (!string.IsNullOrEmpty(blobStorageProvider) && blobStorageProvider.Equals("azure", StringComparison.InvariantCultureIgnoreCase) && !string.IsNullOrEmpty(blobStorageLocationName))
+            {
+                // blob storage will be added as singleton: https://docs.microsoft.com/en-us/dotnet/azure/sdk/thread-safety#client-lifetime
+                var blobStorageFullUrl = blobStorageLocationName;
+
+                if (!blobStorageLocationName.Contains("https://"))
+                {
+                    if (blobStorageLocationName.Contains("blob.core.windows.net"))
+                    {
+                        blobStorageFullUrl = "https://" + blobStorageLocationName;
+                    } else
+                    {
+                        blobStorageFullUrl = "https://" + blobStorageLocationName + ".blob.core.windows.net";
+                    }
+                }
+
+                builder.AddBlobServiceClient(new Uri(blobStorageFullUrl));
             }
 
 

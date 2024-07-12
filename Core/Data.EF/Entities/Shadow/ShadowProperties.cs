@@ -19,4 +19,7 @@ public class ShadowProperties
 
     // ITag
     public const string Tag = "Tag";
+
+    // ITranslation
+    public const string Translation = "Translation";
 }

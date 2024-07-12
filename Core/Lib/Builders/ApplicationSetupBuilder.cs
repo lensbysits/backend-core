@@ -45,7 +45,7 @@ public class ApplicationSetupBuilder : IApplicationSetupBuilder
 
     public IApplicationSetupBuilder AddMediatR()
     {
-        Services.AddMediatR(Assemblies.ToArray());
+        Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assemblies.ToArray()));
         return this;
     }
 }

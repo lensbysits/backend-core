@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\Lib\Core.Lib.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="HtmlSanitizer" Version="8.0.865" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Lib\Core.Lib.csproj" />
+    </ItemGroup>
 
 </Project>
