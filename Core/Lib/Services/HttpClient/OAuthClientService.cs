@@ -47,8 +47,9 @@ public class OAuthClientService : IOAuthClientService
             Policy =
             {
                 Authority = clientSettings.Authority,
-                ValidateEndpoints = false,
-                RequireHttps = clientSettings.RequireHttps,
+                ValidateEndpoints = clientSettings.ValidateEndpoints,
+                ValidateIssuerName = clientSettings.ValidateIssuerName,
+                RequireHttps = clientSettings.RequireHttps
             }
         };
 
@@ -64,7 +65,7 @@ public class OAuthClientService : IOAuthClientService
         var response = await _httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
         {
             Address = disco.TokenEndpoint,
-
+            Resource = clientSettings.Resources ?? new List<string>(),
             ClientId = clientSettings.ClientId,
             ClientSecret = clientSettings.ClientSecret,
             Scope = clientSettings.Scope

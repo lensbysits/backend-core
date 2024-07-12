@@ -30,6 +30,10 @@ public class ResultPagedListModel<TValue> : ResultListModel<TValue>
     /// </summary>
     public int PageNumber => PageIndex + 1;
     /// <summary>
+    /// Return the total number of page.
+    /// </summary>
+    public int PageTotal => (TotalSize ?? 0) / (PageSize ?? 1) + 1;
+    /// <summary>
     /// The name of the property the backend should sort on.
     /// </summary>
     public string? SortingProperty { get; set; }
@@ -55,11 +59,8 @@ public class ResultPagedListModel<TValue> : ResultListModel<TValue>
                 var orderBy = value.OrderBy?.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 PageSize = value.Limit;
                 PageIndex = value.Offset / value.Limit;
-                if (orderBy?.Length > 0)
-                {
-                    SortingProperty = orderBy?[0];
-                    SortingDirection = orderBy?.Length > 1 ? orderBy[1] : SortingDirections.Ascending;
-                }
+                SortingProperty = value.SortingProperty;
+                SortingDirection = value.SortingDirection;
             }
         }
     }

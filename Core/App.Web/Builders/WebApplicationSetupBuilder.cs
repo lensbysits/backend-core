@@ -12,6 +12,9 @@ internal class WebApplicationSetupBuilder : ApplicationSetupBuilder, IWebApplica
     public IControllerOptions Controller { get => ControllerOptions; }
     internal ControllerOptions ControllerOptions { get; } = new ControllerOptions();
 
+    public IAuthOptions Auth { get => AuthOptions; }
+    internal AuthOptions AuthOptions { get; } = new AuthOptions();
+
     public WebApplicationSetupBuilder(IServiceCollection services, IConfiguration configuration) : base(services, configuration)
     {
         HealthChecks = services.AddHealthChecks();

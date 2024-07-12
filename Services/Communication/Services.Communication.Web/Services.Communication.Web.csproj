@@ -2,24 +2,30 @@
 
     <PropertyGroup>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <UserSecretsId>3adbdddd-8d66-4371-a7c7-a2cf3bf18559</UserSecretsId>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Content Remove="appsettings.Development.json" />
+      <Content Remove="appsettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="appsettings.Development.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </None>
+      <None Include="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </None>
+    </ItemGroup>
     
     <ItemGroup>
         <ProjectReference Include="..\..\..\Core\App.Web\Core.App.Web.csproj" />
         <ProjectReference Include="..\Services.Communication\Services.Communication.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Content Update="appsettings.Development.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        </Content>
-        <Content Update="appsettings.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        </Content>
     </ItemGroup>
 
 </Project>

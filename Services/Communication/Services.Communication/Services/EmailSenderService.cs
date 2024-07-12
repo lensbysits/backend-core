@@ -4,6 +4,7 @@ using Lens.Services.Communication.Settings;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using MimeKit;
+using System.Web;
 
 namespace Lens.Services.Communication;
 
@@ -18,33 +19,41 @@ public class EmailSenderService : BaseService<EmailSenderService, SendEmailSetti
         ITemplateRenderServiceFactory templateRenderServiceFactory) : base(applicationService)
     {
         _templateRenderServiceFactory = templateRenderServiceFactory;
+
+        if(string.IsNullOrEmpty(Settings?.SenderAddress))
+        {
+            ApplicationService.Logger.LogError("EmailService cannot be used. Missing setting 'SendEmailSettings.SenderAddress'");
+            throw new Exception("EmailService cannot be used. Missing setting 'SendEmailSettings.SenderAddress'");
+        }
     }
 
-    public Task<MimeMessage?> Send<TModel>(EmailTemplateBM template, TModel data, string toAddress, string ccAddress, string bccAddress, string subject, IEnumerable<EmailAttachmentBM>? attachments = null)
+    public Task<MimeMessage?> Send<TModel>(EmailTemplateBM template, TModel data,  string toAddress, string ccAddress, string bccAddress, string subject, EmailAddressBM? fromAddress = null, IEnumerable<EmailAttachmentBM>? attachments = null)
     {
         return Send(
             template, 
-            data, 
+            data,
             new[] { new EmailAddressBM { Email = toAddress } },
             new[] { new EmailAddressBM { Email = ccAddress } },
             new[] { new EmailAddressBM { Email = bccAddress } },
-            subject, 
+            subject,
+            fromAddress,
             attachments);
     }
 
-    public Task<MimeMessage?> Send<TModel>(EmailTemplateBM template, TModel data, string toAddress, string ccAddress, string bccAddress, string emailName, string subject, IEnumerable<EmailAttachmentBM>? attachments = null)
+    public Task<MimeMessage?> Send<TModel>(EmailTemplateBM template, TModel data, string toAddress, string ccAddress, string bccAddress, string emailName, string subject, EmailAddressBM? fromAddress = null, IEnumerable<EmailAttachmentBM>? attachments = null)
     {
         return Send(
-            template, 
-            data, 
+            template,
+            data,
             new[] { new EmailAddressBM { Email = toAddress, Name = emailName } },
             new[] { new EmailAddressBM { Email = ccAddress } },
             new[] { new EmailAddressBM { Email = bccAddress } },
-            subject, 
+            subject,
+            fromAddress,
             attachments);
     }
 
-    public async Task<MimeMessage?> Send<TModel>(EmailTemplateBM template, TModel data, IEnumerable<EmailAddressBM> toAddresses, IEnumerable<EmailAddressBM> ccAddresses, IEnumerable<EmailAddressBM> bccAddresses, string subject, IEnumerable<EmailAttachmentBM>? attachments = null)
+    public async Task<MimeMessage?> Send<TModel>(EmailTemplateBM template, TModel data, IEnumerable<EmailAddressBM> toAddresses, IEnumerable<EmailAddressBM> ccAddresses, IEnumerable<EmailAddressBM> bccAddresses, string subject, EmailAddressBM? fromAddress = null, IEnumerable<EmailAttachmentBM>? attachments = null)
     {
         if (!toAddresses?.Any() ?? true)
         {
@@ -54,11 +63,11 @@ public class EmailSenderService : BaseService<EmailSenderService, SendEmailSetti
 
         ApplicationService.Logger.LogInformation($"About to send an email to {toAddresses!.First().Name} - {toAddresses!.First().Email}");
 
-        string body = string.Empty;
+        string body;
         try
         {
             var renderer = _templateRenderServiceFactory.GetTemplateRenderService(template.TemplateType);
-            body = await renderer.RenderToStringAsync(template.Template ?? String.Empty, data);
+            body = await renderer.RenderToStringAsync(template.Template ?? string.Empty, data);
         }
         catch (Exception e)
         {
@@ -67,13 +76,13 @@ public class EmailSenderService : BaseService<EmailSenderService, SendEmailSetti
         }
 
         var emailMessage = new MimeMessage();
-        emailMessage.From.Add(new MailboxAddress(ApplicationService.Settings.SenderName, ApplicationService.Settings.SenderAddress));
+        emailMessage.From.Add(new MailboxAddress(fromAddress.Name ?? Settings.SenderName, fromAddress.Email ?? Settings.SenderAddress));
 
         // Use a fixed email-address when one is provided in the configuration (for dev-purposes)
-        var onlySendTo = !string.IsNullOrEmpty(ApplicationService.Settings.OnlySendTo);
+        var onlySendTo = !string.IsNullOrEmpty(Settings.OnlySendTo);
         if (onlySendTo)
         {
-            SetAddressField(new[] { new EmailAddressBM { Email = ApplicationService.Settings.OnlySendTo } }, emailMessage.To);
+            SetAddressField(new[] { new EmailAddressBM { Email = Settings.OnlySendTo } }, emailMessage.To);
         }
         else
         {
@@ -81,14 +90,14 @@ public class EmailSenderService : BaseService<EmailSenderService, SendEmailSetti
             SetAddressField(ccAddresses, emailMessage.Cc);
 
             var bccAddressList = (bccAddresses ?? new List<EmailAddressBM>()).ToList();
-            if (!string.IsNullOrEmpty(ApplicationService.Settings.AlwaysBccTo))
-                bccAddressList.Add(new EmailAddressBM { Email = ApplicationService.Settings.AlwaysBccTo });
+            if (!string.IsNullOrEmpty(Settings.AlwaysBccTo))
+                bccAddressList.Add(new EmailAddressBM { Email = Settings.AlwaysBccTo });
             SetAddressField(bccAddressList, emailMessage.Bcc);
         }
 
         // If a prefix is in the configuration, add it to the subject (for dev-purposes).
-        if (!string.IsNullOrEmpty(ApplicationService.Settings.SubjectPrefix))
-            subject = ApplicationService.Settings.SubjectPrefix + subject;
+        if (!string.IsNullOrEmpty(Settings.SubjectPrefix))
+            subject = Settings.SubjectPrefix + subject;
         emailMessage.Subject = subject;
 
         // build body with attachments
@@ -104,7 +113,7 @@ public class EmailSenderService : BaseService<EmailSenderService, SendEmailSetti
         emailMessage.Body = bodyBuilder.ToMessageBody();
 
         // If the config says not to actually send, then lets get out of here (for dev-purposes).
-        if (!ApplicationService.Settings.ActuallySendEmails)
+        if (!Settings.ActuallySendEmails)
         {
             ApplicationService.Logger.LogInformation($"Setting ActuallySendEmails is off. E-mail is not send");
             return emailMessage;
@@ -115,10 +124,10 @@ public class EmailSenderService : BaseService<EmailSenderService, SendEmailSetti
             client.AuthenticationMechanisms.Remove("XOAUTH2");
             try
             {
-                await client.ConnectAsync(ApplicationService.Settings.Host, ApplicationService.Settings.Port, ApplicationService.Settings.NoSecurity ? MailKit.Security.SecureSocketOptions.None : MailKit.Security.SecureSocketOptions.Auto);
-                if (!ApplicationService.Settings.NoAuthentication)
+                await client.ConnectAsync(Settings.Host, Settings.Port, Settings.NoSecurity ? MailKit.Security.SecureSocketOptions.None : MailKit.Security.SecureSocketOptions.Auto);
+                if (!Settings.NoAuthentication)
                 {
-                    await client.AuthenticateAsync(ApplicationService.Settings.Username, ApplicationService.Settings.Password);
+                    await client.AuthenticateAsync(Settings.Username, Settings.Password);
                 }
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
@@ -154,7 +163,7 @@ public class EmailSenderService : BaseService<EmailSenderService, SendEmailSetti
         }
     }
 
-    private string SanatizeEmail(string email)
+    public string SanatizeEmail(string email)
     {
         var plusIndex = email.IndexOf('+');
         if (plusIndex > 0)

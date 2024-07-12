@@ -4,6 +4,7 @@ namespace Lens.Services.Communication.Models;
 
 public class SendEmailBaseBM
 {
+    public EmailAddressBM? From { get; set; }
     public string? To { get; set; }
     public string? CC { get; set; }
     public string? BCC { get; set; }

@@ -5,7 +5,7 @@ namespace Lens.Core.Lib.Services;
 public class ApiBearerTokenHandler : DelegatingHandler
 {
     private readonly IOAuthClientService _oAuthClientService;
-    public string? ClientName { get; set; }
+    public string ClientName { get; set; } = string.Empty;
 
     public ApiBearerTokenHandler(IOAuthClientService oAuthClientService)
     {
@@ -17,7 +17,7 @@ public class ApiBearerTokenHandler : DelegatingHandler
         CancellationToken cancellationToken)
     {
         // request the access token
-        var accessToken = await _oAuthClientService.GetBearerToken(ClientName ?? throw new ArgumentNullException(nameof(ClientName)));
+        var accessToken = await _oAuthClientService.GetBearerToken(ClientName);
 
         // set the bearer token to the outgoing request
         request.SetBearerToken(accessToken);

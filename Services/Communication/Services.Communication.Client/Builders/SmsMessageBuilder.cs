@@ -1,6 +1,6 @@
 ﻿using Lens.Services.Communication.Models;
 
-namespace Lens.Services.Communication.Web.Client.Builders;
+namespace Lens.Services.Communication.Client.Builders;
 
 public class SmsMessageBuilder
 {

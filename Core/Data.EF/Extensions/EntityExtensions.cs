@@ -10,7 +10,6 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using EFCore = Microsoft.EntityFrameworkCore.EF;
 
 namespace Lens.Core.Data.EF;
@@ -28,7 +27,7 @@ public static class EntityExtensions
         return result;
     }
 
-    public static IQueryable<TEntity> GetByQueryModel<TEntity>(this IQueryable<TEntity> entities, QueryModel queryModel, Expression<Func<TEntity, bool>>? searchPredicate = null)
+    public static IQueryable<TEntity> GetByQueryModel<TEntity>(this IQueryable<TEntity> entities, QueryModel queryModel, Expression<Func<TEntity, bool>>? searchPredicate = null, bool skipOrderBy = false)
        where TEntity : class, IEntity
     {
         // apply default filters
@@ -85,7 +84,10 @@ public static class EntityExtensions
         }
 
         // apply sorting
-        entities = ApplySort(entities, queryModel);
+        if (!skipOrderBy)
+        {
+            entities = ApplySort(entities, queryModel);
+        }
 
         return entities;
     }
@@ -170,8 +172,6 @@ public static class EntityExtensions
 
     private static IQueryable<TEntity> ApplySort<TEntity>(IQueryable<TEntity> entities, QueryModel queryModel)
     {
-        if (!entities.Any()) return entities;
-
         // default sorting when 'order by' query param is missing.
         if (string.IsNullOrWhiteSpace(queryModel.OrderBy) && typeof(ICreatedUpdatedEntity).IsAssignableFrom(typeof(TEntity)))
         {

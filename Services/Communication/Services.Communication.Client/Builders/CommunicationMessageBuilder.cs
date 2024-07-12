@@ -1,7 +1,7 @@
 ﻿using Lens.Services.Communication.Models;
-using Lens.Services.Communication.Web.Client.Services;
+using Lens.Services.Communication.Client.Services;
 
-namespace Lens.Services.Communication.Web.Client.Builders;
+namespace Lens.Services.Communication.Client.Builders;
 
 public class CommunicationMessageBuilder
 {

@@ -53,7 +53,7 @@ public class StartupBase
                 config.AddToLoggingScope = true;
                 config.UpdateTraceIdentifier = true;
             })
-            .AddAuthentication(Configuration)
+            .AddAuthentication(Configuration, applicationSetup.AuthOptions.AuthorizationOptions)
             .AddCors(Configuration)
             .AddSwagger(Configuration);
 
@@ -73,17 +73,26 @@ public class StartupBase
 
     private static void ConfigureControllers(MvcOptions options, WebApplicationSetupBuilder applicationSetup)
     {
+        foreach(var filter in applicationSetup.ControllerOptions.GetRequestPipeLineFilterInstances())
+        {
+            options.Filters.Add(filter);
+        }
+
+        foreach (var filter in applicationSetup.ControllerOptions.GetRequestPipeLineFilterTypes())
+        {
+            options.Filters.Add(filter);
+        }
+
         var authMethod = AuthenticationFactory.GetAuthenticationMethod(applicationSetup.Configuration);
-        options.Filters.Add(new AuthorizeFilter());
+        if (!options.Filters.OfType<AuthorizeFilter>().Any() && authMethod is not AnonymousAuthentication)
+        {
+            options.Filters.Add(new AuthorizeFilter());
+        }
+
 
         if (!applicationSetup.ControllerOptions.IgnoreResultModelWrapper)
         {
             options.Filters.Add(new ResultModelWrapperFilter());
-        }
-
-        foreach(var filter in applicationSetup.Controller.GetRequestPipeLineFilters())
-        {
-            options.Filters.Add(filter);
         }
 
         authMethod.ApplyMvcFilters(options.Filters);
@@ -100,6 +109,8 @@ public class StartupBase
         {
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         }
+
+        applicationSetup.ControllerOptions.JsonSerializerOptions?.Invoke(options.JsonSerializerOptions);
     }
 
     public virtual void OnSetupApplication(IWebApplicationSetupBuilder applicationSetup) { }

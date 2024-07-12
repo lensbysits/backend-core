@@ -8,5 +8,5 @@ public interface IWebApplicationSetupBuilder : IApplicationSetupBuilder
 {
     IControllerOptions Controller { get; }
     IHealthChecksBuilder HealthChecks { get; }
-
+    IAuthOptions Auth { get; }
 }

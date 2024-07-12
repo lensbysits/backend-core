@@ -1,4 +1,4 @@
-﻿namespace Lens.Services.Communication.Web.Client.Settings;
+﻿namespace Lens.Services.Communication.Client.Settings;
 
 public class CommunicationSettings
 {

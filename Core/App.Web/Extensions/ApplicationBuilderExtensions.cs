@@ -24,13 +24,10 @@ public static class ApplicationBuilderExtensions
     {
         var swaggerSettings = configuration.GetSection(nameof(SwaggerSettings)).Get<SwaggerSettings>();
 
-        if (swaggerSettings is null)
+        if (swaggerSettings != null)
         {
-            return appBuilder.UseSwagger();
-        }
-
-        appBuilder.UseSwagger(options =>
-        {
+          appBuilder.UseSwagger(options =>
+          {
             options.RouteTemplate = "swagger/{documentName}/swagger.json";
 
             //Nintex only supports version 2 for now: https://help.nintex.com/en-US/xtensions/04_Reference/REF_KnownIssues.htm
@@ -38,7 +35,8 @@ public static class ApplicationBuilderExtensions
             {
                 options.SerializeAsV2 = true;
             }
-        });
+          });
+        }
 
         return appBuilder;
     }
@@ -60,11 +58,10 @@ public static class ApplicationBuilderExtensions
                 }
 
                 options.RoutePrefix = string.Empty;
-
                 authMethod.UseSwaggerUI(options, swaggerSettings!);
             });
         }
 
-        return appBuilder;
+      return appBuilder;
     }
 }

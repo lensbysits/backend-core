@@ -4,14 +4,21 @@ using Lens.Services.Communication.HttpHandlers;
 using Lens.Services.Communication.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
-namespace Lens.Services.Communication.Models;
+namespace Lens.Services.Communication;
 
 public static class IApplicationSetupBuilderExtensions
 {
     public static IApplicationSetupBuilder AddCommunicationServices(this IApplicationSetupBuilder builder)
     {
         var emailSettingsConfig = builder.Configuration.GetSection(nameof(SendEmailSettings));
+        var emailSettings = emailSettingsConfig.Get<SendEmailSettings>();
+        if(string.IsNullOrEmpty(emailSettings?.SenderAddress))
+        {
+            Log.Warning("EmailService cannot be used. Missing setting 'SendEmailSettings.SenderAddress'");
+        }
+
         var smsSettingsConfig = builder.Configuration.GetSection(nameof(SendSmsSettings));
 
         builder
@@ -41,7 +48,7 @@ public static class IApplicationSetupBuilderExtensions
         .           ConfigureHttpClient(client =>
                     {
                         var settings = builder.Configuration.GetSection(nameof(SendSmsSettings)).Get<SendSmsSettings>();
-                        if(!string.IsNullOrEmpty(settings.SmsUrl))
+                        if(!string.IsNullOrEmpty(settings?.SmsUrl))
                             client.BaseAddress = new Uri(settings.SmsUrl);
                     })
                     .AddHttpMessageHandler<SendSmsHttpHandler>();

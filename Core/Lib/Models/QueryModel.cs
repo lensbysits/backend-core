@@ -40,6 +40,12 @@ public class QueryModel
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? OrderBy { get; set; }
 
+    private (string? field, string direction)? sorting;
+    [JsonIgnore]
+    public string? SortingProperty => (sorting ??= this.GetSorting()).field;
+    [JsonIgnore]
+    public string? SortingDirection => (sorting ??= this.GetSorting()).direction;
+
     public virtual string QueryString
     {
         get

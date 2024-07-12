@@ -31,9 +31,10 @@ public class SenderService : BaseService<SenderService>, ISenderService
                     sendInfo.Email.To, 
                     sendInfo.Email.CC, 
                     sendInfo.Email.BCC, 
-                    sendInfo.Email.Subject);
+                    sendInfo.Email.Subject,
+                    sendInfo.Email.From);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ApplicationService.Logger.LogError(e, "An error occured when try to send an email using info {sendInfo}", sendInfo.Email);
             }   
@@ -45,7 +46,7 @@ public class SenderService : BaseService<SenderService>, ISenderService
             {
                 await _smsSender.Send(sendInfo.Sms);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ApplicationService.Logger.LogError(e, "An error occured when try to send an sms using info {sendInfo}", sendInfo.Sms);
             }

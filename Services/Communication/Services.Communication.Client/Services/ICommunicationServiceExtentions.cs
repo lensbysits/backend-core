@@ -1,6 +1,6 @@
-﻿using Lens.Services.Communication.Web.Client.Builders;
+﻿using Lens.Services.Communication.Client.Builders;
 
-namespace Lens.Services.Communication.Web.Client.Services;
+namespace Lens.Services.Communication.Client.Services;
 
 public static class ICommunicationServiceExtentions
 {
