@@ -61,10 +61,24 @@ internal class AzureAuthentication<T> : OAuth2Authentication<T> where T : AzureA
             }
             if (this.AuthSettings.AllowedIssuers.Any())
             {
+                var allowedIssuers = new List<string>();
+
+                foreach (var issuer in this.AuthSettings.AllowedIssuers)
+                {
+                    allowedIssuers.Add(issuer);
+
+                    if (Guid.TryParse(issuer, out Guid issuerGuid))
+                    {
+                        var azureUrl = $"https://sts.windows.net/{issuerGuid}/";
+
+                        allowedIssuers.Add(azureUrl);
+                    }
+                }
+
                 // we need to override the default issuer validation in order to restrict access only for pre-configured allowed issuers
                 // otherwise all Azure tenants are considered as valid issuer
                 options.TokenValidationParameters.IssuerValidator = null;
-                options.TokenValidationParameters.ValidIssuers = this.AuthSettings.AllowedIssuers;
+                options.TokenValidationParameters.ValidIssuers = allowedIssuers;
                 options.TokenValidationParameters.ValidateIssuer = true;
             }
 

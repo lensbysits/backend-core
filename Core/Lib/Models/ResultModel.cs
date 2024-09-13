@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.InteropServices.ObjectiveC;
+using System.Text.Json.Serialization;
 
 namespace Lens.Core.Lib.Models;
 
@@ -22,6 +23,10 @@ public static class ResultModel
         };
         return result;
     }
+
+    public static IResultModel Empty { get; } = new ResultModelEmpty();
+
+    public static IResultModel EmptyList { get; } = new ResultModelListEmpty();
 }
 
 public class ResultModel<TValue> : IResultModel<TValue>
@@ -39,4 +44,18 @@ public class ResultModel<TValue> : IResultModel<TValue>
     [JsonPropertyName("value")]
     public TValue? Value { get; set; }
 
+}
+
+public class ResultModelEmpty : IResultModel<object>
+{
+    public string ValueType => ResultModelValueType.empty;
+
+    public object? Value { get; set; } = null;
+}
+
+public class ResultModelListEmpty : IResultModel<object>
+{
+    public string ValueType => ResultModelValueType.empty;
+
+    public object? Value { get; set; } = Array.Empty<object>();
 }

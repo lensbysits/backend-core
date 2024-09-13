@@ -54,6 +54,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Masterdata.IntegrationTests", "Services\Masterdata\Services.Masterdata.IntegrationTests\Services.Masterdata.IntegrationTests.csproj", "{0ED852D7-E1E6-4DCD-B03B-8B85BDBFF9F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,10 @@ Global
 		{632DB7A6-9A92-44CE-8251-5C664E090CF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{632DB7A6-9A92-44CE-8251-5C664E090CF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{632DB7A6-9A92-44CE-8251-5C664E090CF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ED852D7-E1E6-4DCD-B03B-8B85BDBFF9F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ED852D7-E1E6-4DCD-B03B-8B85BDBFF9F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ED852D7-E1E6-4DCD-B03B-8B85BDBFF9F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ED852D7-E1E6-4DCD-B03B-8B85BDBFF9F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,6 +168,7 @@ Global
 		{69847B9B-B4C5-4E2E-815B-06BC0A30D413} = {3A5053AF-89EE-443D-BE3A-7449DB6A8B03}
 		{FD1FF2BC-9834-421E-B1EB-F54CFAC0C101} = {3A5053AF-89EE-443D-BE3A-7449DB6A8B03}
 		{632DB7A6-9A92-44CE-8251-5C664E090CF2} = {4097577E-455F-498F-943B-7BD48C19D097}
+		{0ED852D7-E1E6-4DCD-B03B-8B85BDBFF9F5} = {4097577E-455F-498F-943B-7BD48C19D097}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1BAD3FF4-506D-419C-832C-F5F6B3E18748}

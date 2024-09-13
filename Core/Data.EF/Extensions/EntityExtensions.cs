@@ -5,6 +5,7 @@ using Lens.Core.Lib.Exceptions;
 using Lens.Core.Lib.Models;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -30,10 +31,23 @@ public static class EntityExtensions
        where TEntity : class, IEntity
     {
         // apply default filters
-        if (typeof(ITagsEntity).IsAssignableFrom(typeof(TEntity)) && !string.IsNullOrEmpty(queryModel.Tag))
+        if (typeof(ITagsEntity).IsAssignableFrom(typeof(TEntity)))
         {
-            entities = entities
-                .Where(entity => EFCore.Property<string>(entity, ShadowProperties.Tag).Contains($"\"{queryModel.Tag}\""));
+            if (!string.IsNullOrEmpty(queryModel.Tags))
+            {
+                var tagWhere = queryModel.Tags.Split(",")
+                    .Select(tag => {
+                        Expression<Func<TEntity, bool>> expr = entity => EFCore.Property<string>(entity, ShadowProperties.Tag).Contains($"\"{tag}\"");
+                        return expr;
+                    });
+                entities = entities
+                    .Where(tagWhere.ToOrCompositePredicate());
+            }
+            if (!string.IsNullOrEmpty(queryModel.Tag))
+            {
+                entities = entities
+                    .Where(entity => EFCore.Property<string>(entity, ShadowProperties.Tag).Contains($"\"{queryModel.Tag}\""));
+            }
         }
 
         if (typeof(ICreatedUpdatedEntity).IsAssignableFrom(typeof(TEntity)))
@@ -122,7 +136,7 @@ public static class EntityExtensions
     }
 
     public static Expression<Func<TEntity, bool>> ToAndCompositePredicate<TEntity>(this IEnumerable<Expression<Func<TEntity, bool>>> expressions)
-        where TEntity : class, IIdEntity
+        where TEntity : class, IEntity
     {
         ExpressionStarter<TEntity>? predicate = null;
         foreach (var expression in expressions)
@@ -134,9 +148,9 @@ public static class EntityExtensions
     }
 
     public static Expression<Func<TEntity, bool>> ToOrCompositePredicate<TEntity>(this IEnumerable<Expression<Func<TEntity, bool>>> expressions)
-        where TEntity : class, IIdEntity
+        where TEntity : class, IEntity
     {
-        ExpressionStarter<TEntity> predicate = null;
+        ExpressionStarter<TEntity>? predicate = null;
         foreach (var expression in expressions)
         {
             predicate = (predicate == null) ? PredicateBuilder.New(expression) : predicate.Or(expression);

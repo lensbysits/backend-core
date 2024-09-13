@@ -1,5 +1,5 @@
 @ids-url=https://idp/
-@api-url=https://localhost:7029/Masterdata
+@api-url=https://localhost:7022/Masterdata
 
 @clientId=IdentityServerManager
 @clientSecret=default_secret_this_should_not_be_commited
@@ -17,166 +17,258 @@ grant_type=client_credentials&client_id={{clientId}}&client_secret={{clientSecre
 
 
 #############################################################
-### GET ALL MASTERDATA TYPES AVAILABLE
-# @name MasterdataTypeRequest
+### MAIN REQUESTS
+#############################################################
+
+### testing vars
+@masterdataMainUsedType=languages
+@masterdataMain4Get=
+
+### ALL MASTERDATA TYPES AVAILABLE
 GET {{api-url}}
 # Authorization: Bearer {{access_token}}
 
+
+### SINGLE MASTERDATA TYPE DETAILS
+GET {{api-url}}/{{masterdataMainUsedType}}/details
+# Authorization: Bearer {{access_token}}
+
+
+### ALL MASTERDATAS BELONGING TO A MASTERDATA TYPE
+# @name MasterdataRequest
+GET {{api-url}}/{{masterdataMainUsedType}}/?noLimit=true
+# Authorization: Bearer {{access_token}}
+
+###
+GET {{api-url}}/{{masterdataMainUsedType}}/?noLimit=true&orderBy=value%20asc
+
+###
+GET {{api-url}}/{{masterdataMainUsedType}}/?masterdatafilter=BUs:AFRICA&includeDescendants=true
+
+### GET THE DETAILS OF A SINGLE MASTERDATA
+GET {{api-url}}/{{masterdataMainUsedType}}/{{masterdataMain4Get}}
+# Authorization: Bearer {{access_token}}
+
+
+#############################################################
+### MASTERDATA TYPE
+#############################################################
+
+### testing vars
+@masterdataTypeCustom4Get=status
+@masterdataTypeCustom4Add=testing-type
+@masterdataTypeCustom4Delete=testing-type
+@masterdataTypeCustom4Update=testing-type
+
+
 ### USE THIS VARIABLE IF YOU WANT TO USE ID's WHEN CALLING THE API
 # @masterdataType={{MasterdataTypeRequest.response.body.$.value[0].id}}
-
-### USE THIS VARIABLE IF YOU WANT TO USE CODEs WHEN CALLING THE API
-@masterdataType={{MasterdataTypeRequest.response.body.$.value[9].code}}
-@masterdataTypeName={{MasterdataTypeRequest.response.body.$.value[9].name}}
-@masterdataTypeDesc={{MasterdataTypeRequest.response.body.$.value[9].description}}
+# @masterdataType={{MasterdataTypeRequest.response.body.$.value[0].code}}
+# @masterdataTypeName={{MasterdataTypeRequest.response.body.$.value[0].name}}
+# @masterdataTypeDesc={{MasterdataTypeRequest.response.body.$.value[0].description}}
 
 
-### GET THE DETAILS OF A SINGLE MASTERDATA TYPE
-GET {{api-url}}/{{masterdataType}}/details
+### ALL MASTERDATAS BELONGING TO A MASTERDATA TYPE - FILTERED BY TAGS
+GET {{api-url}}/{{masterdataTypeCustom4Get}}/?Tags=test1
 # Authorization: Bearer {{access_token}}
 
 
-### GET ALL MASTERDATAS BELONGING TO A MASTERDATA TYPE
-# @name MasterdataRequest
-GET {{api-url}}/{{masterdataType}}
+### ALL TAGS USED ON A MASTERDATA TYPE
+GET {{api-url}}/{{masterdataTypeCustom4Get}}/tags
 # Authorization: Bearer {{access_token}}
 
+
+### ADD A NEW MASTERDATA TYPE
+# @name MasterdataTypeRequest4Add
+POST {{api-url}}
+# Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+    "code": "{{masterdataTypeCustom4Add}}",
+    "name": "Testing type name",
+    "description": "Testing type desc",
+    "metadata": {
+        "app": {
+            "type-key": "type-value",
+            "type-key-add": "type-value-add",
+            "xssKey-add": "<script>alert('xss')</script>",
+            "xssKey2-add": "hack<script>alert('xss')</script>ing"
+        },
+        "app2": {
+            "type-key": "type-value",
+            "type-key-add": "type-value-add",
+            "xssKey-add": "<script>alert('xss')</script>",
+            "xssKey2-add": "hack<script>alert('xss')</script>ing"
+        },
+        "app3": {
+            "type-key": "type-value",
+            "type-key-add": "type-value-add",
+            "xssKey-add": "<script>alert('xss')</script>",
+            "xssKey2-add": "hack<script>alert('xss')</script>ing"
+        }
+    }
+}
+
+###
+GET {{api-url}}/{{masterdataTypeCustom4Add}}/details
+# Authorization: Bearer {{access_token}}
+
+
+### DELETE A MASTERDATA TYPE BY ENTRY ID
+DELETE {{api-url}}/{{masterdataTypeCustom4Delete}}/details
+# Authorization: Bearer {{access_token}}
+
+###
+GET {{api-url}}/{{masterdataTypeCustom4Delete}}/details
+# Authorization: Bearer {{access_token}}
+
+
+### UPDATE A MASTERDATA TYPE ENTRY
+# @name MasterdataTypeRequest4Update
+PUT {{api-url}}/{{masterdataTypeCustom4Update}}/details
+# Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+    "code": "{{masterdataTypeCustom4Update}}",
+    "name": "Testing type name {{$timestamp}}",
+    "description": "Testing type desc {{$timestamp}}",
+    "metadata": {
+        "app": {
+            "type-key": "type-value {{$timestamp}}",
+            "type-key-update": "type-value-update {{$timestamp}}",
+            "xssKey-update": "<script>alert('xss')</script>",
+            "xssKey2-update": "hack<script>alert('xss')</script>ing"
+        },
+        "app4": {
+            "type-key": "type-value {{$timestamp}}",
+            "type-key-update": "type-value-update {{$timestamp}}",
+            "xssKey-update": "<script>alert('xss')</script>",
+            "xssKey2-update": "hack<script>alert('xss')</script>ing"
+        }
+    }
+    //"metadata": null
+    //"metadata": "{}"
+    //"metadata": {}
+    //"metadata": ""
+}
+
+###
+GET {{api-url}}/{{masterdataTypeCustom4Update}}/details
+# Authorization: Bearer {{access_token}}
+
+
+#############################################################
+### MASTERDATAS
+#############################################################
+
+### testing vars
+@masterdataCustomUsedType=testing-type
+@masterdataCustom4Get=testing-data
+@masterdataCustom4Add=testing-data
+@masterdataCustom4Delete=testing-data
+@masterdataCustom4Update=testing-data
 
 
 ### USE THIS VARIABLE IF YOU WANT TO USE ID's WHEN CALLING THE API
 # @masterdata={{MasterdataRequest.response.body.$.value[0].id}}
-
-### USE THIS VARIABLE IF YOU WANT TO USE CODEs WHEN CALLING THE API
-@masterdata={{MasterdataRequest.response.body.$.value[0].key}}
-@masterdataValue={{MasterdataRequest.response.body.$.value[0].value}}
-@masterdataName={{MasterdataRequest.response.body.$.value[0].name}}
-@masterdataDesc={{MasterdataRequest.response.body.$.value[0].description}}
-
-
-
-### GET THE DETAILS OF A SINGLE MASTERDATA
-GET {{api-url}}/{{masterdataType}}/{{masterdata}}
-Authorization: Bearer {{access_token}}
-
-
-#############################################################
-### ADD A NEW MASTERDATA TYPE
-# @name AddMasterdataTypeRequest
-POST {{api-url}}
-##Authorization: Bearer {{access_token}}
-Content-Type: application/json
-
-{
-    "code": "just-testing13",
-    "name": "JustTesting",
-    "description": "JustTesting desc",
-    "metadata": { "someKey": "<script>alert('xss')</script>"}
-}
-
-#############################################################
-### DELETE A MASTERDATA TYPE BY ENTRY ID
-@delmasterdataType={{AddMasterdataTypeRequest.response.body.$.value.id}}
-DELETE {{api-url}}/{{masterdataType}}/detail
-Authorization: Bearer {{access_token}}
-
-
-### DELETE MASTERDATA BY ENTRY ID
-@delMasterdata=16
-DELETE {{api-url}}/{{masterdataType}}/{{delMasterdata}}
-# Authorization: Bearer {{access_token}}
-
-
-    #"metadata": null
-###
-@addmasterdataType={{AddMasterdataTypeRequest.response.body.$.value.id}}
-
-
-### GET THE DETAILS OF THE ADDED MASTERDATA TYPE
-GET {{api-url}}/{{addmasterdataType}}/details
-# Authorization: Bearer {{access_token}}
+# @masterdata={{MasterdataRequest.response.body.$.value[0].key}}
+# @masterdataValue={{MasterdataRequest.response.body.$.value[0].value}}
+# @masterdataName={{MasterdataRequest.response.body.$.value[0].name}}
+# @masterdataDesc={{MasterdataRequest.response.body.$.value[0].description}}
 
 
 ### ADD MASTERDATA TO AN EXISTING MASTERDATE TYPE
-# @name AddMasterdataRequest
-POST {{api-url}}/{{masterdataType}}
-#Authorization: Bearer {{access_token}}
+# @name MasterdataRequest4Add
+POST {{api-url}}/{{masterdataCustomUsedType}}
+# Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
 {
-    "key": "16",
-    "value": "Undetermined",
-    "name": "Undetermined",
-    "description": "not sure yet",
+    "key": "{{masterdataCustom4Add}}",
+    "value": "Testing data value",
+    "name": "Testing data name",
+    "description": "Testing data desc",
     "metadata": {
-        "defaults": [
-            {
-                "role": "admin",
-                "key": "2"
-            },
-            {
-                "role": "employee",
-                "key": "3"
-            },
-            { "someKey": "<script>alert('xss')</script>"}
-        ]
-    }
+        "app": {
+            "data-key": "data-value",
+            "data-key-add": "data-value-add",
+            "xssKey-add": "<script>alert('xss')</script>",
+            "xssKey2-add": "hack<script>alert('xss')</script>ing",
+            "roles": [{ "role": "admin", "key": "2" }, { "role": "employee", "key": "3" }]
+        },
+        "app2": {
+            "data-key": "data-value",
+            "data-key-add": "data-value-add",
+            "xssKey-add": "<script>alert('xss')</script>",
+            "xssKey2-add": "hack<script>alert('xss')</script>ing",
+            "roles": [{ "role": "admin", "key": "2" }, { "role": "employee", "key": "3" }]
+        },
+        "app3": {
+            "data-key": "data-value",
+            "data-key-add": "data-value-add",
+            "xssKey-add": "<script>alert('xss')</script>",
+            "xssKey2-add": "hack<script>alert('xss')</script>ing",
+            "roles": [{ "role": "admin", "key": "2" }, { "role": "employee", "key": "3" }]
+        }
+    },
+    "tags": ["color blue", "not so height", "top product", "premium class product"]
+    //"tags": ["color <script>alert('xss')</script>red", "very <strong>code</strong>height", "top product<script>alert('xss')</script>", "premium <script>alert('xss')</script>class <i>italic text</i>product"]
 }
 
-
-### GET ALL MASTERDATAS BELONGING TO THE ADDED MASTERDATA TYPE
-GET {{api-url}}/{{addmasterdataType}}
+###
+GET {{api-url}}/{{masterdataCustomUsedType}}/{{masterdataCustom4Add}}
 # Authorization: Bearer {{access_token}}
 
 
-#############################################################
-### UPDATE A MASTERDATA TYPE ENTRY
-# @name PutMasterdataTypeRequest
-PUT {{api-url}}/{{addmasterdataType}}/details
-#Authorization: Bearer {{access_token}}
-Content-Type: application/json
+### DELETE A MASTERDATA TYPE BY ENTRY ID
+DELETE {{api-url}}/{{masterdataCustomUsedType}}/{{masterdataCustom4Delete}}
+# Authorization: Bearer {{access_token}}
 
-{
-    "code": "just-testing10",
-    "name": "JustTesting",
-    "description": "JustTesting desc",
-    "metadata": { 
-        "abc": 
-        { 
-            "p": "c",
-            "script": "hack<script>alert('xss')</script>ing"
-        } 
-    }
-}
-
-
-### GET THE DETAILS OF THE UPDATED MASTERDATA TYPE
-GET {{api-url}}/{{addmasterdataType}}/details
+###
+GET {{api-url}}/{{masterdataCustomUsedType}}/{{masterdataCustom4Delete}}
 # Authorization: Bearer {{access_token}}
 
 
 ### UPDATE A MASTERDATA ENTRY
-# @name PutMasterdataRequest
-@putMasterdataId=15
-PUT {{api-url}}/{{masterdataType}}/{{putMasterdataId}}
-#Authorization: Bearer {{access_token}}
+# @name MasterdataTypeRequest4Update
+PUT {{api-url}}/{{masterdataCustomUsedType}}/{{masterdataCustom4Update}}
+# Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
 {
-    "value": "value-{{$timestamp}}",
-    "name": "name-{{$timestamp}}",
-    "description": "desc-{{$timestamp}}"
+    "value": "Testing data value {{$timestamp}}",
+    "name": "Testing data name {{$timestamp}}",
+    "description": "Testing data desc {{$timestamp}}",
+    "metadata": {
+        "app": {
+            "data-key": "data-value {{$timestamp}}",
+            "data-key-update": "data-value-update {{$timestamp}}",
+            "xssKey-update": "<script>alert('xss')</script>",
+            "xssKey2-update": "hack<script>alert('xss')</script>ing",
+            "roles": [{ "role": "superadmin", "key": "1" }, { "role": "admin", "key": "2" }, { "role": "employee", "key": "3" }]
+        },
+        "app4": {
+            "data-key": "data-value {{$timestamp}}",
+            "data-key-update": "data-value-update {{$timestamp}}",
+            "xssKey-update": "<script>alert('xss')</script>",
+            "xssKey2-update": "hack<script>alert('xss')</script>ing",
+            "roles": [{ "role": "superadmin", "key": "1" }, { "role": "admin", "key": "2" }, { "role": "employee", "key": "3" }]
+        }
+    },
+    "tags": ["1color red", "2very height", "3top product", "4premium class product"]
+    //"tags": ["1color <script>alert('xss')</script>red", "2very <strong>code</strong>height", "3top product<script>alert('xss')</script>", "4premium <script>alert('xss')</script>class <i>italic text</i>product"]
 }
 
 ###
-@putMasterdataWithTypeId={{PutMasterdataRequest.response.body.$.value.masterdataType}}
-
-### GET ALL MASTERDATAS BELONGING TO THE ADDED MASTERDATA TYPE
-GET {{api-url}}/{{masterdataType}}/{{putMasterdataId}}
+GET {{api-url}}/{{masterdataCustomUsedType}}/{{masterdataCustom4Update}}
 # Authorization: Bearer {{access_token}}
 
 
 #############################################################
-### IMPORT
+### IMPORT BULK MASTERDATAS TO A MASTERDATA TYPE
+#############################################################
 
 ### ADD A MASTERDATA TYPE INCLUDING MASTERDATA IN ONE CALL
 POST {{api-url}}/import
@@ -186,3 +278,112 @@ Content-Type: application/json
 #< ./data/statusses.json
 #< ./data/time-unit-type.json
 #< ./data/quotes.json
+#< ./data/countries.json
+< ./data/languages.json
+
+
+#############################################################
+### MASTERDATA-KEYS
+#############################################################
+
+### testing vars
+@masterdataKeyCustomUsedType=testing-type
+@masterdataKeyCustomUsedMasterdata=c96a5e8b-76ad-ed11-9d09-04421a02152c
+@masterdataKeyCustom4DeleteId=b834b633-15b8-ed11-9d15-04421a02152c
+
+
+### ALL MASTERDATA KEYS BELONGING TO A MASTERDATA ITEM
+GET {{api-url}}/{{masterdataKeyCustomUsedType}}/{{masterdataKeyCustomUsedMasterdata}}/keys
+# Authorization: Bearer {{access_token}}
+
+
+### ADD MASTERDATA KEY TO AN EXISTING MASTERDATA
+# @name MasterdataKeyRequest4Add
+POST {{api-url}}/{{masterdataKeyCustomUsedType}}/{{masterdataKeyCustomUsedMasterdata}}/keys
+# Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+[
+{
+    "domain": "[testing-key domain]x",
+    "key": "[testing-key key]x"
+},
+{
+    "domain": "[testing-key domain]x1",
+    "key": "[testing-key key]x1"
+},
+{
+
+    "domain": "[testing-key domain]x2",
+    "key": "[testing-key key]x2"
+},
+{
+    "domain": "[testing-key domain]x3",
+    "key": "[testing-key key]x3"
+}
+]
+
+###
+GET {{api-url}}/{{masterdataKeyCustomUsedType}}/{{masterdataKeyCustomUsedMasterdata}}/keys
+# Authorization: Bearer {{access_token}}
+
+
+### DELETE A MASTERDATA-KEY BY ENTRY ID
+DELETE {{api-url}}/{{masterdataKeyCustomUsedType}}/{{masterdataKeyCustomUsedMasterdata}}/keys/{{masterdataKeyCustom4DeleteId}}
+# Authorization: Bearer {{access_token}}
+
+### DELETE ALL MASTERDATA-KEYS BELONGING TO A MASTERDATA ITEM
+DELETE {{api-url}}/{{masterdataKeyCustomUsedType}}/{{masterdataKeyCustomUsedMasterdata}}/keys
+# Authorization: Bearer {{access_token}}
+
+###
+GET {{api-url}}/{{masterdataKeyCustomUsedType}}/{{masterdataKeyCustomUsedMasterdata}}/keys
+# Authorization: Bearer {{access_token}}
+
+
+### ALL DOMAINS USED ON ALL MASTERDATA ITEMS BELONGING TO A MASTERDATA TYPE
+GET {{api-url}}/{{masterdataKeyCustomUsedType}}/{{masterdataKeyCustomUsedMasterdata}}/keys/domains
+# Authorization: Bearer {{access_token}}
+
+
+#############################################################
+### MASTERDATA Related Items
+#############################################################
+
+### testing vars
+@masterdataRelatedCustomUsedType=time_units
+@masterdataRelatedCustomUsedMasterdata=5
+@masterdataRelatedCustomRelatedType=time_units
+
+
+### ADD MASTERDATA Related Items TO AN EXISTING MASTERDATA
+# @name MasterdataRelatedRequest4Add
+POST {{api-url}}/{{masterdataRelatedCustomUsedType}}/{{masterdataRelatedCustomUsedMasterdata}}/related
+# Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+[
+    {
+        "masterdataId": "eec7f6f1-cb71-ed11-9cbd-48e7daf5481e"
+    },
+    {
+        "masterdataId": "eac7f6f1-cb71-ed11-9cbd-48e7daf5481e"
+    }
+]
+
+### ALL RELATED USED ON ALL MASTERDATA ITEMS BELONGING TO A MASTERDATA TYPE
+GET {{api-url}}/{{masterdataRelatedCustomUsedType}}/{{masterdataRelatedCustomUsedMasterdata}}/related
+
+###
+GET {{api-url}}/{{masterdataRelatedCustomUsedType}}/{{masterdataRelatedCustomUsedMasterdata}}/related/{{masterdataRelatedCustomRelatedType}}
+
+###
+GET {{api-url}}/{{masterdataRelatedCustomUsedType}}/{{masterdataRelatedCustomUsedMasterdata}}/related/{{masterdataRelatedCustomRelatedType}}?includeDescendants=true
+
+### DELETE RELATED
+DELETE {{api-url}}/{{masterdataRelatedCustomUsedType}}/{{masterdataRelatedCustomUsedMasterdata}}/related
+Content-Type: application/json
+
+[
+    "068957b9-d1ae-ed11-baff-001a7dda7110"
+]

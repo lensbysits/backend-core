@@ -26,16 +26,16 @@ public static class ApplicationBuilderExtensions
 
         if (swaggerSettings != null)
         {
-            appBuilder.UseSwagger(options =>
-            {
-                    options.RouteTemplate = "swagger/{documentName}/swagger.json";
+          appBuilder.UseSwagger(options =>
+          {
+            options.RouteTemplate = "swagger/{documentName}/swagger.json";
 
-                //Nintex only supports version 2 for now: https://help.nintex.com/en-US/xtensions/04_Reference/REF_KnownIssues.htm
-                if (!string.IsNullOrEmpty(swaggerSettings.OpenAPIVersion) && swaggerSettings.OpenAPIVersion.Equals("2"))
-                {
-                    options.SerializeAsV2 = true;
-                }
-            });
+            //Nintex only supports version 2 for now: https://help.nintex.com/en-US/xtensions/04_Reference/REF_KnownIssues.htm
+            if (!string.IsNullOrEmpty(swaggerSettings.OpenAPIVersion) && swaggerSettings.OpenAPIVersion.Equals("2"))
+            {
+                options.SerializeAsV2 = true;
+            }
+          });
         }
 
         return appBuilder;
@@ -52,16 +52,16 @@ public static class ApplicationBuilderExtensions
             {
                 options.SwaggerEndpoint("swagger/v1/swagger.json", swaggerSettings?.AppName ?? "API V1");
 
-                foreach(var definition in swaggerSettings?.ExtraDefinitions ?? new())
+                foreach (var definition in swaggerSettings?.ExtraDefinitions ?? new())
                 {
                     options.SwaggerEndpoint($"swagger/{definition.GroupName}/swagger.json", definition.AppName);
                 }
 
                 options.RoutePrefix = string.Empty;
-
-            authMethod.UseSwaggerUI(options, swaggerSettings!);
+                authMethod.UseSwaggerUI(options, swaggerSettings!);
             });
         }
-        return appBuilder;
+
+      return appBuilder;
     }
 }

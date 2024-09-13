@@ -26,4 +26,8 @@ public class MasterdataCreateModel
     }
 
     public JsonElement? Metadata { get; set; }
+
+    [JsonIgnore]
+    public string Tag => JsonSerializer.Serialize(Tags ?? Array.Empty<string>());
+    public string[]? Tags { get; set; }
 }

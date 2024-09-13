@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="Fluid.Core" Version="2.4.0" />
-    <PackageReference Include="MailKit" Version="3.6.0" />
+    <PackageReference Include="Fluid.Core" Version="2.10.0" />
+    <PackageReference Include="MailKit" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>

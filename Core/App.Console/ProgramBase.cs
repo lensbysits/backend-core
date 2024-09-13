@@ -17,5 +17,6 @@ public abstract class ProgramBase : App.ProgramBase
                     var applicationSetup = new ApplicationSetupBuilder (services, context.Configuration);
                     ApplicationSetup?.Invoke(context, applicationSetup);
                     applicationSetup.AddApplicationServices();
+                    applicationSetup.AddAssemblySpecificApplicationServices();
                 });
 }
