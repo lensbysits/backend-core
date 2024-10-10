@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="HtmlSanitizer" Version="8.0.865" />
+        <PackageReference Include="HtmlSanitizer" Version="8.1.870" />
     </ItemGroup>
 
     <ItemGroup>
