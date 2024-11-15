@@ -1,8 +1,12 @@
 ﻿using Lens.Core.Lib.Builders;
+using Lens.Core.Lib.Exceptions;
 using Lens.Core.Lib.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+
 namespace Lens.Core.Lib;
+
 
 public static class ApplicationSetupBuilderExtensions
 {
@@ -13,13 +17,30 @@ public static class ApplicationSetupBuilderExtensions
         return applicationSetup;
     }
 
-    public static IApplicationSetupBuilder AddOAuthClient(this IApplicationSetupBuilder applicationSetup)
+    public static IApplicationSetupBuilder AddOAuthClientServices(this IApplicationSetupBuilder applicationSetup)
     {
-        if (!applicationSetup.Services.Any(d => d.ServiceType == typeof(IOAuthClientService)))
+        if (!applicationSetup.Services.Any(d => d.ServiceType == typeof(IOAuthClientTokenService)))
         {
             applicationSetup.Services
                 .Configure<OAuthClientSettings>(applicationSetup.Configuration.GetSection(nameof(OAuthClientSettings)))
-                .AddScoped<IOAuthClientService, OAuthClientService>();
+                .AddDistributedMemoryCache()
+                .AddScoped<IOAuthClientTokenService, OAuthClientTokenService>();
+
+            var _clientBuilder = applicationSetup.Services.AddClientCredentialsTokenManagement();
+
+            var section = applicationSetup.Configuration.GetSection(nameof(OAuthClientSettings));
+            foreach (var item in section.GetChildren())
+            {
+                var clientSettings = item.Get<OAuthClientSetting>();
+                _clientBuilder.AddClient(item.Key, client =>
+                {
+                    client.TokenEndpoint = clientSettings.Authority + "/oauth2/token";
+                    client.ClientId = clientSettings.ClientId;
+                    client.ClientSecret = clientSettings.ClientSecret;
+                    client.Scope = clientSettings.Scope;
+                    client.Resource = string.Join(' ', (clientSettings.Resources ?? new List<string>())).Trim();
+                });
+            }
         }
 
         return applicationSetup;
@@ -33,20 +54,11 @@ public static class ApplicationSetupBuilderExtensions
         where TClient : class
         where TImplementation : class, TClient
     {
-        if (!applicationSetup.Services.Any(d => d.ServiceType == typeof(ApiBearerTokenHandler)))
+        applicationSetup.Services.AddHttpClient<TClient, TImplementation>(client =>
         {
-            applicationSetup.Services.AddTransient<ApiBearerTokenHandler>();
-        }
-
-        applicationSetup
-            .AddHttpClientService<TClient, TImplementation>(
-                client => client.BaseAddress = new Uri(baseUri ?? string.Empty),
-                services =>
-                {
-                    var handler = services.GetRequiredService<ApiBearerTokenHandler>();
-                    handler.ClientName = clientName;
-                    return handler;
-                });
+            client.BaseAddress = new Uri(baseUri ?? string.Empty);
+        })
+        .AddClientCredentialsTokenHandler(clientName);
 
         return applicationSetup;
     }

@@ -14,7 +14,7 @@ public static class IApplicationSetupBuilderExtentions
     {
         var settings = builder.Configuration.GetSection(nameof(CommunicationSettings))?.Get<CommunicationSettings>() ?? throw new Exception($"Missing settings for '{nameof(CommunicationSettings)}'");
         builder
-            .AddOAuthClient()
+            .AddOAuthClientServices()
             .AddHttpClientService<ICommunicationService, CommunicationService>(oauthClientConfigurationKey, settings.Uri);
 
         return builder;

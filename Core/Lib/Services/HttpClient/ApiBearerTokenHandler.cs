@@ -2,12 +2,13 @@
 
 namespace Lens.Core.Lib.Services;
 
+[Obsolete("Replaced by Duende token management")]
 public class ApiBearerTokenHandler : DelegatingHandler
 {
-    private readonly IOAuthClientService _oAuthClientService;
+    private readonly IOAuthClientTokenService _oAuthClientService;
     public string ClientName { get; set; } = string.Empty;
 
-    public ApiBearerTokenHandler(IOAuthClientService oAuthClientService)
+    public ApiBearerTokenHandler(IOAuthClientTokenService oAuthClientService)
     {
         _oAuthClientService = oAuthClientService ?? throw new ArgumentNullException(nameof(oAuthClientService));
     }

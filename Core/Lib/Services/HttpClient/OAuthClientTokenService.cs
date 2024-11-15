@@ -6,15 +6,16 @@ using httpClient = System.Net.Http.HttpClient;
 
 namespace Lens.Core.Lib.Services;
 
-public class OAuthClientService : IOAuthClientService
+[Obsolete("Replaced by Duende token management")]
+public class OAuthClientTokenService : IOAuthClientTokenService
 {
     private readonly httpClient _httpClient;
-    private readonly ILogger<OAuthClientService> _logger;
+    private readonly ILogger<OAuthClientTokenService> _logger;
     private readonly OAuthClientSettings _oauthClientSettings;
 
-    public OAuthClientService(
+    public OAuthClientTokenService(
         httpClient httpClient,
-        ILogger<OAuthClientService> logger,
+        ILogger<OAuthClientTokenService> logger,
         IOptionsSnapshot<OAuthClientSettings> authClientOptions)
     {
         _httpClient = httpClient;
@@ -26,7 +27,7 @@ public class OAuthClientService : IOAuthClientService
     {
         if (!_oauthClientSettings.TryGetValue(clientName, out var clientSettings))
         {
-            throw new NotFoundException($"Settings are missing for client '{clientName}'. Please add {nameof(OAuthClientService)}:{clientName} to the settings.");
+            throw new NotFoundException($"Settings are missing for client '{clientName}'. Please add {nameof(OAuthClientTokenService)}:{clientName} to the settings.");
         }
 
         try
